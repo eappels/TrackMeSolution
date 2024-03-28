@@ -3,5 +3,6 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:maps="clr-namespace:Microsoft.Maui.Controls.Maps;assembly=Microsoft.Maui.Controls.Maps"
              x:Class="TrackMe.Views.MapView">
-    <maps:Map x:Name="MyMap" />
+    <maps:Map x:Name="MyMap"
+              IsShowingUser="True" />
 </ContentPage>
