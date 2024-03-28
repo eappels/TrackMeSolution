@@ -12,7 +12,7 @@
 		<ApplicationTitle>TrackMe</ApplicationTitle>
 
 		<!-- App Identifier -->
-		<ApplicationId>net.edje.TrackMe</ApplicationId>
+		<ApplicationId>be.TrackMe</ApplicationId>
 		<ApplicationIdGuid>0854515c-5e46-416e-873a-060370b8aea0</ApplicationIdGuid>
 
 		<!-- Versions -->
@@ -20,6 +20,11 @@
 		<ApplicationVersion>1</ApplicationVersion>
 
 		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'ios'">11.0</SupportedOSPlatformVersion>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(TargetFramework)'=='net7.0-ios'">
+	  <CodesignKey>Apple Development: Created via API (P43A762Q8A)</CodesignKey>
+	  <CodesignProvision>VS: be.TrackMe Development</CodesignProvision>
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -41,11 +46,13 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<PackageReference Include="CommunityToolkit.Mvvm" Version="8.2.2" />
 		<PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="7.0.0" />
+		<PackageReference Include="Microsoft.Maui.Controls.Maps" Version="7.0.101" />
 	</ItemGroup>
 
 	<ItemGroup>
-	  <MauiXaml Update="Views\HomeView.xaml">
+	  <MauiXaml Update="Views\MapView.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
 	</ItemGroup>

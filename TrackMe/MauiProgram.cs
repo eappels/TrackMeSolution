@@ -1,4 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
+using TrackMe.Services.Interfaces;
+using TrackMe.Services;
 using TrackMe.ViewModels;
 using TrackMe.Views;
 
@@ -15,6 +17,7 @@ public static class MauiProgram
                     fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
                 }
             )
+            .UseMauiMaps()
             .Register()
             .Build();
 
@@ -24,8 +27,10 @@ public static class MauiProgram
         mauiAppBuilder.Logging.AddDebug();
 #endif
 
-        mauiAppBuilder.Services.AddSingleton<HomeViewModel>();
-        mauiAppBuilder.Services.AddTransient<HomeView>();
+        mauiAppBuilder.Services.AddSingleton<ILocationService, LocationService>();
+
+        mauiAppBuilder.Services.AddSingleton<MapViewModel>();
+        mauiAppBuilder.Services.AddTransient<MapView>();
 
         return mauiAppBuilder;
     }
