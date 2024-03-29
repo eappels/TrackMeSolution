@@ -1,6 +1,6 @@
 using CommunityToolkit.Mvvm.Messaging;
+using Microsoft.Maui.Controls.Maps;
 using Microsoft.Maui.Maps;
-using System.Diagnostics;
 using TrackMe.Helpers;
 using TrackMe.Messages;
 using TrackMe.ViewModels;
@@ -12,11 +12,19 @@ public partial class MapView : ContentPage
 
     private double mapZoomLevel = 1;
 
-	public MapView(MapViewModel viewModel)
+    public MapView(MapViewModel viewModel)
 	{
 		InitializeComponent();
 
         BindingContext = viewModel;
+
+        viewModel.Track = new Polyline
+        {
+            StrokeColor = Colors.Blue,
+            StrokeWidth = 6
+        };
+
+        MyMap.MapElements.Add(viewModel.Track);
 
         MainThread.BeginInvokeOnMainThread(async () =>
         {
@@ -28,11 +36,6 @@ public partial class MapView : ContentPage
                 MapSpan mapSpan = MapSpan.FromCenterAndRadius(tmpCurrentLocation, Distance.FromKilometers(mapZoomLevel));
                 MyMap.MoveToRegion(mapSpan);
 
-                MyMap.PropertyChanging += (s, e) =>
-                {
-
-                };
-
                 MyMap.PropertyChanged += (s, e) =>
                 {
                     if (e.PropertyName == "VisibleRegion")
@@ -43,8 +46,10 @@ public partial class MapView : ContentPage
 
                 WeakReferenceMessenger.Default.Register<LocationUpdatedMessage>(this, (r, m) =>
                 {
-                    MapSpan mapSpan = MapSpan.FromCenterAndRadius(new Location(m.Value.Latitude, m.Value.Longitude), MyMap.VisibleRegion.Radius);
+                    var location = new Location(m.Value.Latitude, m.Value.Longitude);
+                    MapSpan mapSpan = MapSpan.FromCenterAndRadius(location, MyMap.VisibleRegion.Radius);
                     MyMap.MoveToRegion(mapSpan);
+                    viewModel.Track.Geopath.Add(location);
                 });
             }
         });

@@ -16,9 +16,9 @@ public partial class LocationService
     partial void StartTrackingInternal(double distanceFilter)
     {
 
-#if DEBUG
-        distanceFilter = 0.1;
-#endif
+//#if DEBUG
+//        distanceFilter = 0.1;
+//#endif
         locationManager = new CLLocationManager
         {
             PausesLocationUpdatesAutomatically = false,

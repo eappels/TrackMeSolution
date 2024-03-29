@@ -3,6 +3,21 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:maps="clr-namespace:Microsoft.Maui.Controls.Maps;assembly=Microsoft.Maui.Controls.Maps"
              x:Class="TrackMe.Views.MapView">
-    <maps:Map x:Name="MyMap"
-              IsShowingUser="True" />
+    <Grid ColumnDefinitions="*,100,10"
+          RowDefinitions="*,40,10">
+        <maps:Map x:Name="MyMap"
+                  IsShowingUser="True"
+                  ZIndex="0"
+                  Grid.Row="0"
+                  Grid.RowSpan="3"
+                  Grid.Column="0"
+                  Grid.ColumnSpan="3" />
+        <Button Text="Save"
+                Command="{Binding SaveTrack}"
+                ZIndex="1"
+                Grid.Row="1"
+                Grid.RowSpan="1"
+                Grid.Column="1"
+                Grid.ColumnSpan="1" />
+    </Grid>
 </ContentPage>
