@@ -1,5 +1,6 @@
 using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.Maui.Maps;
+using System.Diagnostics;
 using TrackMe.Helpers;
 using TrackMe.Messages;
 using TrackMe.ViewModels;
@@ -27,6 +28,10 @@ public partial class MapView : ContentPage
                 MapSpan mapSpan = MapSpan.FromCenterAndRadius(tmpCurrentLocation, Distance.FromKilometers(mapZoomLevel));
                 MyMap.MoveToRegion(mapSpan);
 
+                MyMap.PropertyChanging += (s, e) =>
+                {
+
+                };
 
                 MyMap.PropertyChanged += (s, e) =>
                 {
@@ -38,7 +43,7 @@ public partial class MapView : ContentPage
 
                 WeakReferenceMessenger.Default.Register<LocationUpdatedMessage>(this, (r, m) =>
                 {
-                    MapSpan mapSpan = MapSpan.FromCenterAndRadius(new Location(m.Value.Latitude, m.Value.Longitude), Distance.FromKilometers(mapZoomLevel));
+                    MapSpan mapSpan = MapSpan.FromCenterAndRadius(new Location(m.Value.Latitude, m.Value.Longitude), MyMap.VisibleRegion.Radius);
                     MyMap.MoveToRegion(mapSpan);
                 });
             }

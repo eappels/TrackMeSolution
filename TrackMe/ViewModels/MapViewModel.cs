@@ -1,4 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.Messaging;
+using System.Diagnostics;
 using TrackMe.Messages;
 using TrackMe.Models;
 using TrackMe.Services.Interfaces;
@@ -15,7 +16,7 @@ public class MapViewModel : BaseViewModel, IDisposable
     {
         this.locationService = locationService;
         this.locationService.OnLocationUpdate = OnLocationServiceUpdate;
-        this.locationService.StartTracking(1);
+        this.locationService.StartTracking(500);
     }
 
     private void OnLocationServiceUpdate(CustomLocation location)
