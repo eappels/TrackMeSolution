@@ -3,7 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.9.34701.34
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TrackMe", "TrackMe\TrackMe.csproj", "{090202DA-EE21-4286-9665-275F966D7710}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TrackMe", "TrackMe\TrackMe.csproj", "{090202DA-EE21-4286-9665-275F966D7710}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TrackMe.Tests", "TrackMe.Tests\TrackMe.Tests.csproj", "{BF0F51AD-FD2D-44E5-85B8-11BBEDFA12B2}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -17,6 +19,10 @@ Global
 		{090202DA-EE21-4286-9665-275F966D7710}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{090202DA-EE21-4286-9665-275F966D7710}.Release|Any CPU.Build.0 = Release|Any CPU
 		{090202DA-EE21-4286-9665-275F966D7710}.Release|Any CPU.Deploy.0 = Release|Any CPU
+		{BF0F51AD-FD2D-44E5-85B8-11BBEDFA12B2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BF0F51AD-FD2D-44E5-85B8-11BBEDFA12B2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BF0F51AD-FD2D-44E5-85B8-11BBEDFA12B2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BF0F51AD-FD2D-44E5-85B8-11BBEDFA12B2}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
