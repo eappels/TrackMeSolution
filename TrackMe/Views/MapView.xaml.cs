@@ -40,20 +40,20 @@ public partial class MapView : ContentPage
                 {
                     if (e.PropertyName == "VisibleRegion")
                     {
-                        mapZoomLevel = MyMap.VisibleRegion.Radius.Kilometers;
-                    }
+                        mapZoomLevel = MyMap.VisibleRegion.Radius.Kilometers;                        
+                    }                    
                 };
 
                 WeakReferenceMessenger.Default.Register<LocationUpdatedMessage>(this, (r, m) =>
                 {
                     var location = new Location(m.Value.Latitude, m.Value.Longitude);
                     MapSpan mapSpan = MapSpan.FromCenterAndRadius(location, MyMap.VisibleRegion.Radius);
-                    MyMap.MoveToRegion(mapSpan);
+                    if (viewModel.IsToggled)
+                        MyMap.MoveToRegion(mapSpan);
                     viewModel.Track.Geopath.Add(location);
                 });
             }
         });
-
     }
 
     public async Task<Location> GetCachedLocation()

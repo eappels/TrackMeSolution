@@ -1,33 +1,24 @@
 ﻿using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
-using Microsoft.Maui.Controls.Maps;
-using Microsoft.Maui.Controls.Shapes;
+using System.Diagnostics;
 using TrackMe.Messages;
 using TrackMe.Models;
 using TrackMe.Services.Interfaces;
+using Polyline = Microsoft.Maui.Controls.Maps.Polyline;
 
 namespace TrackMe.ViewModels;
 
-public class MapViewModel : BaseViewModel, IDisposable
+public partial class MapViewModel : BaseViewModel, IDisposable
 {
 
 
     private readonly ILocationService locationService;
-    public RelayCommand SaveTrackCommand { get; private set; }
 
     public MapViewModel(ILocationService locationService)
     {
         this.locationService = locationService;
         this.locationService.OnLocationUpdate = OnLocationServiceUpdate;
-        this.locationService.StartTracking(500);
-
-        SaveTrackCommand = new RelayCommand(() =>
-        {
-            //
-            // Write to text file and share ?
-            // https://learn.microsoft.com/en-us/dotnet/maui/platform-integration/data/share?view=net-maui-8.0&tabs=windows
-            //
-        });
+        this.locationService.StartTracking(250);
     }
 
     private void OnLocationServiceUpdate(CustomLocation location)
@@ -45,10 +36,24 @@ public class MapViewModel : BaseViewModel, IDisposable
 
     }
 
+    [RelayCommand]
+    public void SaveTrack()
+    {
+        // Write to text file and share ?
+        // https://learn.microsoft.com/en-us/dotnet/maui/platform-integration/data/share?view=net-maui-8.0&tabs=windows
+    }
+
     private Polyline track;
     public Polyline Track
     {
         get => track;
         set => SetProperty(ref track, value);
+    }
+
+    private bool isToggled;
+    public bool IsToggled
+    {
+        get => isToggled;
+        set => SetProperty(ref isToggled, value);
     }
 }
