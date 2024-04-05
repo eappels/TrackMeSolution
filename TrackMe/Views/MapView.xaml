@@ -12,7 +12,7 @@
                   Grid.RowSpan="5"
                   Grid.Column="0"
                   Grid.ColumnSpan="3" />
-        <Switch IsToggled="{Binding IsToggled}"
+        <Switch IsToggled="{Binding FollowUser}"
                 ZIndex="1"
                 Grid.Row="1"
                 Grid.RowSpan="1"

@@ -1,5 +1,6 @@
 using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.Maui.Controls.Maps;
+using Microsoft.Maui.Devices.Sensors;
 using Microsoft.Maui.Maps;
 using TrackMe.Helpers;
 using TrackMe.Messages;
@@ -32,9 +33,10 @@ public partial class MapView : ContentPage
 
             if (result == PermissionStatus.Granted)
             {
-                var tmpCurrentLocation = await GetCachedLocation();
+                var tmpCurrentLocation = await GetCachedLocation();                
                 MapSpan mapSpan = MapSpan.FromCenterAndRadius(tmpCurrentLocation, Distance.FromKilometers(mapZoomLevel));
                 MyMap.MoveToRegion(mapSpan);
+                viewModel.Track.Geopath.Add(tmpCurrentLocation);
 
                 MyMap.PropertyChanged += (s, e) =>
                 {
@@ -47,9 +49,11 @@ public partial class MapView : ContentPage
                 WeakReferenceMessenger.Default.Register<LocationUpdatedMessage>(this, (r, m) =>
                 {
                     var location = new Location(m.Value.Latitude, m.Value.Longitude);
-                    MapSpan mapSpan = MapSpan.FromCenterAndRadius(location, MyMap.VisibleRegion.Radius);
-                    if (viewModel.IsToggled)
+                    if (viewModel.FollowUser)
+                    {
+                        MapSpan mapSpan = MapSpan.FromCenterAndRadius(location, MyMap.VisibleRegion.Radius);
                         MyMap.MoveToRegion(mapSpan);
+                    }
                     viewModel.Track.Geopath.Add(location);
                 });
             }

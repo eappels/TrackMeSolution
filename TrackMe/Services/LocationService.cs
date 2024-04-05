@@ -8,7 +8,7 @@ public partial class LocationService : ILocationService
 
     public Action<CustomLocation> OnLocationUpdate { get; set; }
 
-    public void StartTracking(double distanceFilter)
+    public void StartTracking(double distanceFilter = 250)
     {
         StartTrackingInternal(distanceFilter);
     }
