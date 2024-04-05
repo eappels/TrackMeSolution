@@ -28,6 +28,7 @@ public static class MauiProgram
 #endif
 
         mauiAppBuilder.Services.AddSingleton<ILocationService, LocationService>();
+        mauiAppBuilder.Services.AddSingleton<IDBService, DBService>();
 
         mauiAppBuilder.Services.AddSingleton<MapViewModel>();
         mauiAppBuilder.Services.AddTransient<MapView>();

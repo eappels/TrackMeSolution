@@ -13,18 +13,31 @@ public partial class MapViewModel : BaseViewModel, IDisposable
 
 
     private readonly ILocationService locationService;
+    private readonly IDBService dbService;
 
-    public MapViewModel(ILocationService locationService)
+    public MapViewModel(ILocationService locationService, IDBService dbService)
     {
         this.locationService = locationService;
         this.locationService.OnLocationUpdate = OnLocationServiceUpdate;
         this.locationService.StartTracking(100);
+
+        this.dbService = dbService;
+
+        MainThread.BeginInvokeOnMainThread(async () =>
+        {
+            var list = await dbService.GetTracksFromToday();
+            foreach (var location in list)
+            {
+                track.Geopath.Add(new Location(location.Latitude, location.Longitude));
+            }
+        });        
     }
 
     private void OnLocationServiceUpdate(CustomLocation location)
     {
         WeakReferenceMessenger.Default.Send(new LocationUpdatedMessage(location));
         track.Geopath.Add(new Location(location.Latitude, location.Longitude));
+        dbService.SaveItemAsync(location);
     }
 
     public void Dispose()
@@ -41,18 +54,20 @@ public partial class MapViewModel : BaseViewModel, IDisposable
     public async Task SaveTrack()
     {
         locationService.OnLocationUpdate -= OnLocationServiceUpdate;
-        string fileLocation = Path.Combine(FileSystem.AppDataDirectory, DateTime.Now.ToString("dd-MM-yyyy-HHmmss") + ".txt");
+        var date = DateTime.Now.ToString("dd-MM-yyyy-HHmmss");
+        string fileLocation = Path.Combine(FileSystem.AppDataDirectory, date + ".txt");
+        await dbService.SaveCurrentTrack(date, track.Geopath);
         using (StreamWriter outFile = new StreamWriter(fileLocation))
         {
             foreach (Location location in track.Geopath)
             {
-                CustomLocation customLocation = new CustomLocation(location.Latitude, location.Longitude);
+                CustomLocation customLocation = new CustomLocation(location.Latitude, location.Longitude, date);
                 outFile.WriteLine(customLocation.ToString());
             }
         }
 
         await ShareFile(fileLocation);
-    }
+    }    
 
     public async Task ShareFile(string file)
     {
