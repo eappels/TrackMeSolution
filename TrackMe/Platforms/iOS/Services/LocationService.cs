@@ -21,7 +21,8 @@ public partial class LocationService
     {
         locationManager.LocationsUpdated += (object sender, CLLocationsUpdatedEventArgs e) =>
         {
-            CustomLocation newLocation = new CustomLocation(e.Locations.LastOrDefault().Coordinate.Latitude, e.Locations.LastOrDefault().Coordinate.Longitude);
+            var date = DateTime.Now.ToString("dd-MM-yyyy-HHmmss");
+            CustomLocation newLocation = new CustomLocation(e.Locations.LastOrDefault().Coordinate.Latitude, e.Locations.LastOrDefault().Coordinate.Longitude, date);
             OnLocationUpdate?.Invoke(newLocation);
         };
         locationManager.DistanceFilter = distanceFilter;

@@ -30,33 +30,32 @@ public partial class MapView : ContentPage
         MainThread.BeginInvokeOnMainThread(async () =>
         {
             var result = await AppPermissions.CheckAndRequestRequiredPermissionAsync();
+            if (result != PermissionStatus.Granted)
+                return;
 
-            if (result == PermissionStatus.Granted)
+            var tmpCurrentLocation = await GetCachedLocation();                
+            MapSpan mapSpan = MapSpan.FromCenterAndRadius(tmpCurrentLocation, Distance.FromKilometers(mapZoomLevel));
+            MyMap.MoveToRegion(mapSpan);
+            viewModel.Track.Geopath.Add(tmpCurrentLocation);
+
+            MyMap.PropertyChanged += (s, e) =>
             {
-                var tmpCurrentLocation = await GetCachedLocation();                
-                MapSpan mapSpan = MapSpan.FromCenterAndRadius(tmpCurrentLocation, Distance.FromKilometers(mapZoomLevel));
-                MyMap.MoveToRegion(mapSpan);
-                viewModel.Track.Geopath.Add(tmpCurrentLocation);
-
-                MyMap.PropertyChanged += (s, e) =>
+                if (e.PropertyName == "VisibleRegion")
                 {
-                    if (e.PropertyName == "VisibleRegion")
-                    {
-                        mapZoomLevel = MyMap.VisibleRegion.Radius.Kilometers;                        
-                    }                    
-                };
+                    mapZoomLevel = MyMap.VisibleRegion.Radius.Kilometers;                        
+                }                    
+            };
 
-                WeakReferenceMessenger.Default.Register<LocationUpdatedMessage>(this, (r, m) =>
+            WeakReferenceMessenger.Default.Register<LocationUpdatedMessage>(this, (r, m) =>
+            {
+                var location = new Location(m.Value.Latitude, m.Value.Longitude);
+                if (viewModel.FollowUser)
                 {
-                    var location = new Location(m.Value.Latitude, m.Value.Longitude);
-                    if (viewModel.FollowUser)
-                    {
-                        MapSpan mapSpan = MapSpan.FromCenterAndRadius(location, MyMap.VisibleRegion.Radius);
-                        MyMap.MoveToRegion(mapSpan);
-                    }
-                    viewModel.Track.Geopath.Add(location);
-                });
-            }
+                    MapSpan mapSpan = MapSpan.FromCenterAndRadius(location, MyMap.VisibleRegion.Radius);
+                    MyMap.MoveToRegion(mapSpan);
+                }
+                viewModel.Track.Geopath.Add(location);
+            });            
         });
     }
 

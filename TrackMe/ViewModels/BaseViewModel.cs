@@ -1,21 +1,8 @@
-﻿using System.ComponentModel;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace TrackMe.ViewModels;
-public class BaseViewModel : INotifyPropertyChanged
+
+public class BaseViewModel : ObservableObject
 {
-    public event PropertyChangedEventHandler PropertyChanged;
 
-    protected virtual void OnPropertyChanged(string propertyName)
-    {
-        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-    }
-
-    protected bool SetProperty<T>(ref T field, T value, [System.Runtime.CompilerServices.CallerMemberName] string propertyName = "")
-    {
-        if (EqualityComparer<T>.Default.Equals(field, value)) return false;
-
-        field = value;
-        OnPropertyChanged(propertyName);
-        return true;
-    }
 }

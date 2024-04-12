@@ -33,6 +33,9 @@ public static class MauiProgram
         mauiAppBuilder.Services.AddSingleton<MapViewModel>();
         mauiAppBuilder.Services.AddTransient<MapView>();
 
+        mauiAppBuilder.Services.AddSingleton<HistoryViewModel>();
+        mauiAppBuilder.Services.AddTransient<HistoryView>();
+
         return mauiAppBuilder;
     }
 }

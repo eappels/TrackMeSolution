@@ -9,6 +9,7 @@ public class DBService : IDBService
 {
 
     private SQLiteAsyncConnection Database;
+    private string LastDateRequested;
 
     public DBService()
     {        
@@ -38,17 +39,28 @@ public class DBService : IDBService
     public async Task<List<CustomLocation>> GetTracksFromToday()
     {
         await Init();
-        return await Database.Table<CustomLocation>().Where(x => x.Date.Contains(DateTime.Now.ToString("dd-MM-yyyy"))).ToListAsync();
+        LastDateRequested = DateTime.Now.ToString("dd-MM-yyyy");
+        return await Database.Table<CustomLocation>().Where(x => x.Date.Contains(LastDateRequested)).ToListAsync();
     }
 
-    public async Task SaveCurrentTrack(string date, IList<Location> locations)
+    public async Task<List<CustomLocation>> GetTracksFromPreviousDay()
     {
-        var customLocations = new List<CustomLocation>();
-        foreach (var loc in locations)
-        {
-            customLocations.Add(new CustomLocation(loc.Latitude, loc.Longitude, date));
-        }
         await Init();
-        await Database.InsertAllAsync(customLocations);
+        LastDateRequested = DateTime.Now.AddDays(-1).ToString("dd-MM-yyyy");
+        return await Database.Table<CustomLocation>().Where(x => x.Date.Contains(LastDateRequested)).ToListAsync();
+    }
+
+    public async Task<List<CustomLocation>> GetTracksFromNextDay()
+    {
+        await Init();
+        LastDateRequested = DateTime.Now.AddDays(1).ToString("dd-MM-yyyy");
+        return await Database.Table<CustomLocation>().Where(x => x.Date.Contains(LastDateRequested)).ToListAsync();
+    }
+
+    public async Task DeleteAllTracksAsync()
+    {
+        await Init();
+        await Database.DropTableAsync<CustomLocation>();
+        await Database.CloseAsync();
     }
 }

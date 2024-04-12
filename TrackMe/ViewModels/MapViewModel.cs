@@ -1,4 +1,5 @@
-﻿using CommunityToolkit.Mvvm.Input;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using System.Diagnostics;
 using TrackMe.Messages;
@@ -10,7 +11,6 @@ namespace TrackMe.ViewModels;
 
 public partial class MapViewModel : BaseViewModel, IDisposable
 {
-
 
     private readonly ILocationService locationService;
     private readonly IDBService dbService;
@@ -28,15 +28,15 @@ public partial class MapViewModel : BaseViewModel, IDisposable
             var list = await dbService.GetTracksFromToday();
             foreach (var location in list)
             {
-                track.Geopath.Add(new Location(location.Latitude, location.Longitude));
+                Track.Geopath.Add(new Location(location.Latitude, location.Longitude));
             }
-        });        
+        });
     }
 
     private void OnLocationServiceUpdate(CustomLocation location)
     {
         WeakReferenceMessenger.Default.Send(new LocationUpdatedMessage(location));
-        track.Geopath.Add(new Location(location.Latitude, location.Longitude));
+        Track.Geopath.Add(new Location(location.Latitude, location.Longitude));
         dbService.SaveItemAsync(location);
     }
 
@@ -50,51 +50,9 @@ public partial class MapViewModel : BaseViewModel, IDisposable
 
     }
 
-    [RelayCommand]
-    public async Task SaveTrack()
-    {
-        locationService.OnLocationUpdate -= OnLocationServiceUpdate;
-        var date = DateTime.Now.ToString("dd-MM-yyyy-HHmmss");
-        string fileLocation = Path.Combine(FileSystem.AppDataDirectory, date + ".txt");
-        await dbService.SaveCurrentTrack(date, track.Geopath);
-        using (StreamWriter outFile = new StreamWriter(fileLocation))
-        {
-            foreach (Location location in track.Geopath)
-            {
-                CustomLocation customLocation = new CustomLocation(location.Latitude, location.Longitude, date);
-                outFile.WriteLine(customLocation.ToString());
-            }
-        }
+    [ObservableProperty]
+    private Polyline track;    
 
-        await ShareFile(fileLocation);
-    }    
-
-    public async Task ShareFile(string file)
-    {
-        await Share.Default.RequestAsync(new ShareFileRequest
-        {
-            Title = "TrackMe - Saved track",
-            File = new ShareFile(file)
-        });
-        if (File.Exists(file))
-        {
-            File.Delete(file);
-        }
-        track.Geopath.Clear();
-        locationService.OnLocationUpdate += OnLocationServiceUpdate;
-    }
-
-    private Polyline track;
-    public Polyline Track
-    {
-        get => track;
-        set => SetProperty(ref track, value);
-    }
-
+    [ObservableProperty]
     private bool followUser;
-    public bool FollowUser
-    {
-        get => followUser;
-        set => SetProperty(ref followUser, value);
-    }
 }
