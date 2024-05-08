@@ -64,7 +64,6 @@ public partial class MapView : ContentPage
         try
         {
             Location location = await Geolocation.Default.GetLastKnownLocationAsync();
-
             if (location != null)
                 return location;
         }
@@ -72,7 +71,6 @@ public partial class MapView : ContentPage
         {
             await DisplayAlert("Error", ex.Message, "OK");
         }
-
         return new Location();
     }
 }

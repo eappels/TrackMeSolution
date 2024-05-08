@@ -1,6 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.Maui.Controls.Maps;
+using System.Diagnostics;
 using TrackMe.Services.Interfaces;
 
 namespace TrackMe.ViewModels;
@@ -25,31 +26,25 @@ public partial class HistoryViewModel : ObservableObject
     }
 
     [RelayCommand]
-    private void PreviousDay()
+    private async Task PreviousDay()
     {
-        MainThread.BeginInvokeOnMainThread(async () =>
+        var list = await dbService.GetTracksFromPreviousDay();
+        Track.Geopath.Clear();
+        foreach (var location in list)
         {
-            var list = await dbService.GetTracksFromPreviousDay();
-            Track.Geopath.Clear();
-            foreach (var location in list)
-            {
-                Track.Geopath.Add(new Location(location.Latitude, location.Longitude));
-            }
-        });
+            Track.Geopath.Add(new Location(location.Latitude, location.Longitude));
+        }
     }
 
     [RelayCommand]
-    private void NextDay()
+    private async Task NextDay()
     {
-        MainThread.BeginInvokeOnMainThread(async () =>
+        var list = await dbService.GetTracksFromNextDay();
+        Track.Geopath.Clear();
+        foreach (var location in list)
         {
-            var list = await dbService.GetTracksFromNextDay();
-            Track.Geopath.Clear();
-            foreach (var location in list)
-            {
-                Track.Geopath.Add(new Location(location.Latitude, location.Longitude));
-            }
-        });
+            Track.Geopath.Add(new Location(location.Latitude, location.Longitude));
+        }
     }
 
     [ObservableProperty]

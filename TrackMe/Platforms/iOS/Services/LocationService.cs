@@ -1,4 +1,5 @@
 ﻿using CoreLocation;
+using System.Diagnostics;
 using TrackMe.Models;
 
 namespace TrackMe.Services;
@@ -20,9 +21,10 @@ public partial class LocationService
     partial void StartTrackingInternal(double distanceFilter)
     {
         locationManager.LocationsUpdated += (object sender, CLLocationsUpdatedEventArgs e) =>
-        {
+        {            
             var date = DateTime.Now.ToString("dd-MM-yyyy-HHmmss");
-            CustomLocation newLocation = new CustomLocation(e.Locations.LastOrDefault().Coordinate.Latitude, e.Locations.LastOrDefault().Coordinate.Longitude, date);
+            var speed = e.Locations.LastOrDefault().Speed;
+            CustomLocation newLocation = new CustomLocation(e.Locations.LastOrDefault().Coordinate.Latitude, e.Locations.LastOrDefault().Coordinate.Longitude, date, speed);
             OnLocationUpdate?.Invoke(newLocation);
         };
         locationManager.DistanceFilter = distanceFilter;

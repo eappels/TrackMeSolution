@@ -1,7 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
-using System.Diagnostics;
+using Microsoft.Maui.Maps;
 using TrackMe.Messages;
 using TrackMe.Models;
 using TrackMe.Services.Interfaces;
@@ -14,6 +13,7 @@ public partial class MapViewModel : BaseViewModel, IDisposable
 
     private readonly ILocationService locationService;
     private readonly IDBService dbService;
+    private CustomLocation oldlocation;
 
     public MapViewModel(ILocationService locationService, IDBService dbService)
     {
@@ -26,6 +26,8 @@ public partial class MapViewModel : BaseViewModel, IDisposable
         MainThread.BeginInvokeOnMainThread(async () =>
         {
             var list = await dbService.GetTracksFromToday();
+            if (list.Count == 0)
+                return;
             foreach (var location in list)
             {
                 Track.Geopath.Add(new Location(location.Latitude, location.Longitude));
@@ -35,9 +37,19 @@ public partial class MapViewModel : BaseViewModel, IDisposable
 
     private void OnLocationServiceUpdate(CustomLocation location)
     {
-        WeakReferenceMessenger.Default.Send(new LocationUpdatedMessage(location));
-        Track.Geopath.Add(new Location(location.Latitude, location.Longitude));
-        dbService.SaveItemAsync(location);
+        if (location.Speed > 0)
+        {
+            WeakReferenceMessenger.Default.Send(new LocationUpdatedMessage(location));
+            Track.Geopath.Add(new Location(location.Latitude, location.Longitude));
+            dbService.SaveItemAsync(location);
+            
+        }
+        oldlocation = location;
+    }
+
+    private double DistanceBetweenLocations(CustomLocation location)
+    {
+        return Distance.BetweenPositions(new Location(oldlocation.Latitude, oldlocation.Longitude), new Location(location.Latitude, location.Longitude)).Meters;
     }
 
     public void Dispose()

@@ -9,7 +9,7 @@ public class DBService : IDBService
 {
 
     private SQLiteAsyncConnection Database;
-    private string LastDateRequested;
+    private DateTime LastDate;
 
     public DBService()
     {        
@@ -39,22 +39,22 @@ public class DBService : IDBService
     public async Task<List<CustomLocation>> GetTracksFromToday()
     {
         await Init();
-        LastDateRequested = DateTime.Now.ToString("dd-MM-yyyy");
-        return await Database.Table<CustomLocation>().Where(x => x.Date.Contains(LastDateRequested)).ToListAsync();
+        LastDate = DateTime.Now;
+        return await Database.Table<CustomLocation>().Where(x => x.Date.Contains(LastDate.ToString("dd-MM-yyyy"))).ToListAsync();
     }
 
     public async Task<List<CustomLocation>> GetTracksFromPreviousDay()
     {
         await Init();
-        LastDateRequested = DateTime.Now.AddDays(-1).ToString("dd-MM-yyyy");
-        return await Database.Table<CustomLocation>().Where(x => x.Date.Contains(LastDateRequested)).ToListAsync();
+        LastDate = LastDate.AddDays(-1);
+        return await Database.Table<CustomLocation>().Where(x => x.Date.Contains(LastDate.ToString("dd-MM-yyyy"))).ToListAsync();
     }
 
     public async Task<List<CustomLocation>> GetTracksFromNextDay()
     {
         await Init();
-        LastDateRequested = DateTime.Now.AddDays(1).ToString("dd-MM-yyyy");
-        return await Database.Table<CustomLocation>().Where(x => x.Date.Contains(LastDateRequested)).ToListAsync();
+        LastDate = LastDate.AddDays(1);
+        return await Database.Table<CustomLocation>().Where(x => x.Date.Contains(LastDate.ToString("dd-MM-yyyy"))).ToListAsync();
     }
 
     public async Task DeleteAllTracksAsync()
